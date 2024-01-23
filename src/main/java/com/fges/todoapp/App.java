@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
  */
 public class App {
 
+    private static final String JSON_EXTENSION = ".json";
+    private static final String CSV_EXTENSION = ".csv";
+
     /**
      * Do not change this method
      */
@@ -56,70 +59,94 @@ public class App {
 
         Path filePath = Paths.get(fileName);
 
-        String fileContent = "";
+        if (!validateFile(filePath)) {
+            System.err.println("Invalid file or file not found: " + fileName);
+            return 1;
+        }
+
+        String fileContent = Files.exists(filePath) ? Files.readString(filePath) : "";
 
         if (Files.exists(filePath)) {
             fileContent = Files.readString(filePath);
         }
 
         if (command.equals("insert")) {
-            if (positionalArgs.size() < 2) {
-                System.err.println("Missing TODO name");
-                return 1;
-            }
-            String todo = positionalArgs.get(1);
-
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not reconised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.add(todo);
-                }
-
-                Files.writeString(filePath, actualObj.toString());
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
-                    fileContent += "\n";
-                }
-                fileContent += todo;
-
-                Files.writeString(filePath, fileContent);
-            }
+            handleInsertCommand(fileName, positionalArgs, fileContent);
+        } else if ("list".equals(command)) {
+            handleListCommand(fileName, fileContent);
+        } else {
+            System.err.println("Unknown command: " + command);
+            return 1;
         }
-
-
-        if (command.equals("list")) {
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not recognised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.forEach(node -> System.out.println("- " + node.toString()));
-                }
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                System.out.println(Arrays.stream(fileContent.split("\n"))
-                        .map(todo -> "- " + todo)
-                        .collect(Collectors.joining("\n"))
-                );
-            }
-        }
-
-        System.err.println("Done.");
         return 0;
+    }
+
+    private static void handleListCommand(String fileName, String fileContent) throws IOException {
+        if (fileName.endsWith(JSON_EXTENSION)) {
+            handleJsonList(fileContent);
+        } else if (fileName.endsWith(CSV_EXTENSION)) {
+            handleCsvList(fileContent);
+        }
+    }
+
+    private static void handleJsonList(String fileContent) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree(fileContent);
+        if (actualObj instanceof MissingNode) {
+            actualObj = JsonNodeFactory.instance.arrayNode();
+        }
+
+        if (actualObj instanceof ArrayNode arrayNode) {
+            arrayNode.forEach(node -> System.out.println("- " + node.toString()));
+        }
+    }
+
+    private static void handleCsvList(String fileContent) {
+        System.out.println(Arrays.stream(fileContent.split("\n"))
+                .map(todo -> "- " + todo)
+                .collect(Collectors.joining("\n"))
+        );
+    }
+
+    private static void handleInsertCommand(String fileName, List<String> positionalArgs, String fileContent) throws IOException {
+        if (positionalArgs.size() < 2) {
+            System.err.println("Missing TODO name");
+            System.exit(1);
+        }
+
+        String todo = positionalArgs.get(1);
+
+        if (fileName.endsWith(JSON_EXTENSION)) {
+            handleJsonInsert(fileName,fileContent, todo);
+        } else if (fileName.endsWith(CSV_EXTENSION)) {
+            handleCsvInsert(fileName,fileContent, todo);
+        }
+    }
+
+    private static void handleJsonInsert(String fileName,String fileContent, String todo) throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree(fileContent);
+        if (actualObj instanceof MissingNode) {
+            actualObj = JsonNodeFactory.instance.arrayNode();
+        }
+
+        if (actualObj instanceof ArrayNode arrayNode) {
+            arrayNode.add(todo);
+        }
+
+        Files.writeString(Paths.get(fileName), actualObj.toString());
+    }
+
+    private static void handleCsvInsert(String fileName,String fileContent, String todo) throws IOException {
+        if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
+            fileContent += "\n";
+        }
+        fileContent += todo;
+
+        Files.writeString(Paths.get(fileName), fileContent);
+    }
+    
+    private static boolean validateFile(Path filePath) {
+        return Files.exists(filePath) && Files.isRegularFile(filePath) && Files.isReadable(filePath);
     }
 }
