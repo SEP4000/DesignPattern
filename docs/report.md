@@ -1,25 +1,12 @@
 # L3 design pattern report
 
-- **Firstname**: [Your firstname]
-- **Lastname**: [Your lastname]
+- **Firstname**: Sépande
+- **Lastname**: Nivandy
 
+**Pour le mardi 30 janvier :** 
+J'ai décomposé le code, en voyant qu'il y avait beaucoup trop de "if" les uns dans les autres, j'ai décidé de les remplacé en créants des méthodes.
+J'ai ajouter une méthode pour vérifier si le fichier est valide.
+J'ai aussi créé deux constante qui ne peuvent pas être modifiée après son initialisation qui ont été servi  définir les extensions JSON et CSV qui vont servir dans des méthodes
+que j'ai ajouter pour pouvoir comprendre comment les fichiers JSON et CSV sont gérer plus facilement.
+J'ai donc par la suite créer différentes méthodes qui ont servi à gérer la commande "list" pour les listes de tâches qui redirigera vers une des deux méthodes si c'est un fichier CSV ou Json, j'ai fait la même chose pour la commande "insert".
 
-> Add your thoughts on every TP bellow, everything is interresting but no need to right a book.
-> 
-> Keep it short simple and efficient:
-> 
-> - What you did and why
-> - What helped you and why
-> - What did you find difficult
-> - What did not help you
-> - What did you need to change
-> - Anything relevant
-> 
-> Add a link to schemas describing your architecture (UML or not but add a legend)
-> 
-> Remember: it is ok to make mistakes, you will have time to spot them later.
-> 
-> Fill free to contact me if needed.
-
----
-...
