@@ -59,11 +59,6 @@ public class App {
 
         Path filePath = Paths.get(fileName);
 
-        if (!validateFile(filePath)) {
-            System.err.println("Invalid file or file not found: " + fileName);
-            return 1;
-        }
-
         String fileContent = Files.exists(filePath) ? Files.readString(filePath) : "";
 
         if (Files.exists(filePath)) {
@@ -145,8 +140,5 @@ public class App {
 
         Files.writeString(Paths.get(fileName), fileContent);
     }
-    
-    private static boolean validateFile(Path filePath) {
-        return Files.exists(filePath) && Files.isRegularFile(filePath) && Files.isReadable(filePath);
-    }
+
 }
