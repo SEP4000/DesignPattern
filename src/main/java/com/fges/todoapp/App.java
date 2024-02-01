@@ -1,6 +1,5 @@
 package com.fges.todoapp;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,22 +63,71 @@ public class App {
             fileContent = Files.readString(filePath);
         }
 
-        if (command.equals("insert")) {
-            handleInsertCommand(fileName, positionalArgs, fileContent);
-        } else if ("list".equals(command)) {
-            handleListCommand(fileName, fileContent);
-        } else {
-            System.err.println("Unknown command: " + command);
-            return 1;
-        }
+        // Utilisation d'une map pour associer chaque commande à son exécuteur
+        Map<String, Command> commandMap = Map.of(
+                "insert", new InsertCommand(),
+                "list", new ListCommand()
+        );
+
+        // Utilisation de l'exécuteur de commandes
+        CommandExecutor commandExecutor = new CommandExecutor(commandMap);
+        commandExecutor.execute(command, fileName, fileContent, positionalArgs);
+
+        System.err.println("Done.");
         return 0;
     }
 
-    private static void handleListCommand(String fileName, String fileContent) throws IOException {
-        if (fileName.endsWith(JSON_EXTENSION)) {
-            handleJsonList(fileContent);
-        } else if (fileName.endsWith(CSV_EXTENSION)) {
-            handleCsvList(fileContent);
+    // Interface Command définissant le contrat pour chaque type de commande
+    public interface Command {
+        void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException;
+    }
+
+    // Implémentation de la commande "insert"
+    public static class InsertCommand implements Command {
+        @Override
+        public void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException {
+            if (positionalArgs.size() < 2) {
+                System.err.println("Missing TODO name");
+                System.exit(1);
+            }
+
+            String todo = positionalArgs.get(1);
+
+            if (fileName.endsWith(JSON_EXTENSION)) {
+                handleJsonInsert(fileName, fileContent, todo);
+            } else if (fileName.endsWith(CSV_EXTENSION)) {
+                handleCsvInsert(fileName, fileContent, todo);
+            }
+        }
+    }
+
+    // Implémentation de la commande "list"
+    public static class ListCommand implements Command {
+        @Override
+        public void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException {
+            if (fileName.endsWith(JSON_EXTENSION)) {
+                handleJsonList(fileContent);
+            } else if (fileName.endsWith(CSV_EXTENSION)) {
+                handleCsvList(fileContent);
+            }
+        }
+    }
+
+    // Exécuteur de commandes
+    public static class CommandExecutor {
+        private final Map<String, Command> commandMap;
+
+        public CommandExecutor(Map<String, Command> commandMap) {
+            this.commandMap = commandMap;
+        }
+
+        public void execute(String commandName, String fileName, String fileContent, List<String> positionalArgs) throws IOException {
+            Command command = commandMap.get(commandName);
+            if (command != null) {
+                command.execute(fileName, fileContent, positionalArgs);
+            } else {
+                System.err.println("Unknown command: " + commandName);
+            }
         }
     }
 
@@ -103,22 +150,7 @@ public class App {
         );
     }
 
-    private static void handleInsertCommand(String fileName, List<String> positionalArgs, String fileContent) throws IOException {
-        if (positionalArgs.size() < 2) {
-            System.err.println("Missing TODO name");
-            System.exit(1);
-        }
-
-        String todo = positionalArgs.get(1);
-
-        if (fileName.endsWith(JSON_EXTENSION)) {
-            handleJsonInsert(fileName,fileContent, todo);
-        } else if (fileName.endsWith(CSV_EXTENSION)) {
-            handleCsvInsert(fileName,fileContent, todo);
-        }
-    }
-
-    private static void handleJsonInsert(String fileName,String fileContent, String todo) throws IOException{
+    private static void handleJsonInsert(String fileName, String fileContent, String todo) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(fileContent);
         if (actualObj instanceof MissingNode) {
@@ -132,7 +164,7 @@ public class App {
         Files.writeString(Paths.get(fileName), actualObj.toString());
     }
 
-    private static void handleCsvInsert(String fileName,String fileContent, String todo) throws IOException {
+    private static void handleCsvInsert(String fileName, String fileContent, String todo) throws IOException {
         if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
             fileContent += "\n";
         }
@@ -140,5 +172,4 @@ public class App {
 
         Files.writeString(Paths.get(fileName), fileContent);
     }
-
 }
