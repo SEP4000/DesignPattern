@@ -21,9 +21,8 @@ import java.util.stream.Collectors;
  */
 public class App {
 
-    private static final String JSON_EXTENSION = ".json";
-    private static final String CSV_EXTENSION = ".csv";
-
+    public static final String CSV_EXTENSION = ".csv";
+    public static final String JSON_EXTENSION = ".json";
     /**
      * Do not change this method
      */
@@ -75,101 +74,5 @@ public class App {
 
         System.err.println("Done.");
         return 0;
-    }
-
-    // Interface Command définissant le contrat pour chaque type de commande
-    public interface Command {
-        void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException;
-    }
-
-    // Implémentation de la commande "insert"
-    public static class InsertCommand implements Command {
-        @Override
-        public void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException {
-            if (positionalArgs.size() < 2) {
-                System.err.println("Missing TODO name");
-                System.exit(1);
-            }
-
-            String todo = positionalArgs.get(1);
-
-            if (fileName.endsWith(JSON_EXTENSION)) {
-                handleJsonInsert(fileName, fileContent, todo);
-            } else if (fileName.endsWith(CSV_EXTENSION)) {
-                handleCsvInsert(fileName, fileContent, todo);
-            }
-        }
-    }
-
-    // Implémentation de la commande "list"
-    public static class ListCommand implements Command {
-        @Override
-        public void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException {
-            if (fileName.endsWith(JSON_EXTENSION)) {
-                handleJsonList(fileContent);
-            } else if (fileName.endsWith(CSV_EXTENSION)) {
-                handleCsvList(fileContent);
-            }
-        }
-    }
-
-    // Exécuteur de commandes
-    public static class CommandExecutor {
-        private final Map<String, Command> commandMap;
-
-        public CommandExecutor(Map<String, Command> commandMap) {
-            this.commandMap = commandMap;
-        }
-
-        public void execute(String commandName, String fileName, String fileContent, List<String> positionalArgs) throws IOException {
-            Command command = commandMap.get(commandName);
-            if (command != null) {
-                command.execute(fileName, fileContent, positionalArgs);
-            } else {
-                System.err.println("Unknown command: " + commandName);
-            }
-        }
-    }
-
-    private static void handleJsonList(String fileContent) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(fileContent);
-        if (actualObj instanceof MissingNode) {
-            actualObj = JsonNodeFactory.instance.arrayNode();
-        }
-
-        if (actualObj instanceof ArrayNode arrayNode) {
-            arrayNode.forEach(node -> System.out.println("- " + node.toString()));
-        }
-    }
-
-    private static void handleCsvList(String fileContent) {
-        System.out.println(Arrays.stream(fileContent.split("\n"))
-                .map(todo -> "- " + todo)
-                .collect(Collectors.joining("\n"))
-        );
-    }
-
-    private static void handleJsonInsert(String fileName, String fileContent, String todo) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(fileContent);
-        if (actualObj instanceof MissingNode) {
-            actualObj = JsonNodeFactory.instance.arrayNode();
-        }
-
-        if (actualObj instanceof ArrayNode arrayNode) {
-            arrayNode.add(todo);
-        }
-
-        Files.writeString(Paths.get(fileName), actualObj.toString());
-    }
-
-    private static void handleCsvInsert(String fileName, String fileContent, String todo) throws IOException {
-        if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
-            fileContent += "\n";
-        }
-        fileContent += todo;
-
-        Files.writeString(Paths.get(fileName), fileContent);
     }
 }
