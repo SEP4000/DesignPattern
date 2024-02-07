@@ -30,3 +30,7 @@ Utilisation des Principes SOLID :
 **I (Interface Segregation Principle) :** L'utilisation d'interfaces ("Command") assure que chaque implémentation n'a que les méthodes nécessaires à sa fonctionnalité spécifique.
 
 **D (Dependency Inversion Principle) :** L'application suit le principe d'inversion de contrôle en utilisant une map pour associer des noms de commandes à leurs implémentations.
+
+
+# Pour le mardi 13 février : #
+J'ai découpé le code en plusieurs fichier afin d'avoir une meilleur lisibilité des méthodes utilisés et que ce ne soit plus dans un seul fichier Java.
