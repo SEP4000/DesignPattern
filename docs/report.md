@@ -34,3 +34,5 @@ Utilisation des Principes SOLID :
 
 # Pour le mardi 13 février : #
 J'ai découpé le code en plusieurs fichier afin d'avoir une meilleur lisibilité des méthodes utilisés et que ce ne soit plus dans un seul fichier Java.
+
+![Texte alternatif](schéma.png)
