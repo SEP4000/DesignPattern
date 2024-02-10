@@ -35,4 +35,14 @@ Utilisation des Principes SOLID :
 # Pour le mardi 13 février : #
 J'ai découpé le code en plusieurs fichier afin d'avoir une meilleur lisibilité des méthodes utilisés et que ce ne soit plus dans un seul fichier Java.
 
-![Texte alternatif](Schéma.png)
+Voici un schéma qui montre les relations entre les différentes classes et interfaces du code:
+
+![Schéma](Schéma.png)
+
+Dans ce schéma :
+
+- App est la classe principale qui contient la méthode main et qui initialise l'exécution de l'application.
+- Command est une interface qui définit la méthode execute, qui est implémentée par InsertCommand et ListCommand.
+- CommandExecutor est une classe qui exécute les commandes en fonction de leur nom.
+- InsertCommand et ListCommand sont des classes qui implémentent l'interface Command et qui contiennent la logique spécifique à chaque commande (insert et list, respectivement).
+- Les flèches représentent les dépendances ou les relations entre les différentes parties du code. Par exemple, App utilise CommandExecutor, qui lui-même utilise des instances de Command (qui peuvent être InsertCommand ou ListCommand).
