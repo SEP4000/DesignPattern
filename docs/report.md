@@ -41,8 +41,8 @@ Voici un schéma qui montre les relations entre les différentes classes et inte
 
 Dans ce schéma :
 
-- App est la classe principale qui contient la méthode main et qui initialise l'exécution de l'application.
+- App est la classe principale qui contient la méthode main, elle initialise l'exécution de l'application.
 - Command est une interface qui définit la méthode execute, qui est implémentée par InsertCommand et ListCommand.
 - CommandExecutor est une classe qui exécute les commandes en fonction de leur nom.
-- InsertCommand et ListCommand sont des classes qui implémentent l'interface Command et qui contiennent la logique spécifique à chaque commande (insert et list, respectivement).
+- InsertCommand ,ListCommand ,sont des classes qui implémentent l'interface Command , elles contiennent la logique spécifique à chaque commande (insert, list, respectivement).
 - Les flèches représentent les dépendances ou les relations entre les différentes parties du code. Par exemple, App utilise CommandExecutor, qui lui-même utilise des instances de Command (qui peuvent être InsertCommand ou ListCommand).
