@@ -46,3 +46,6 @@ Dans ce schéma :
 - CommandExecutor est une classe qui exécute les commandes en fonction de leur nom.
 - InsertCommand ,ListCommand ,sont des classes qui implémentent l'interface Command , elles contiennent la logique spécifique à chaque commande (insert, list, respectivement).
 - Les flèches représentent les dépendances ou les relations entre les différentes parties du code. Par exemple, App utilise CommandExecutor, qui lui-même utilise des instances de Command (qui peuvent être InsertCommand ou ListCommand).
+
+# Pour le lundi 26 février : # 
+J'ai ajoutél'implémentation de la méthode Done ainsi que de la méthode migrate pour pouvoir faire la migration des fichiers.
