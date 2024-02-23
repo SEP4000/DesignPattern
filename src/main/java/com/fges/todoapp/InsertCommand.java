@@ -1,24 +1,26 @@
 package com.fges.todoapp;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InsertCommand implements Command {
+    private final boolean isDone;
+
+    public InsertCommand(boolean isDone) {
+        this.isDone = isDone;
+    }
+
     @Override
-    public void execute(String fileName, String fileContent, List<String> positionalArgs) throws IOException {
+    public void execute(String fileName, String fileContent, List<String> positionalArgs) {
         if (positionalArgs.size() < 2) {
             System.err.println("Missing TODO name");
-            System.exit(1);
+            return;
         }
 
         String todo = positionalArgs.get(1);
@@ -30,32 +32,38 @@ public class InsertCommand implements Command {
         }
     }
 
-    private void handleJsonInsert(String fileName, String fileContent, String todo) throws IOException
-    {
-        // Implémentation de la gestion des fichiers JSON pour l'insertion
+    private void handleJsonInsert(String fileName, String fileContent, String todo) {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(fileContent);
-        if (actualObj instanceof MissingNode)
-        {
-            actualObj = JsonNodeFactory.instance.arrayNode();
-        }
+        ArrayNode todosArray;
 
-        if (actualObj instanceof ArrayNode arrayNode) {
-            arrayNode.add(todo);
-        }
+        try {
+            if (fileContent.isEmpty()) {
+                todosArray = mapper.createArrayNode();
+            } else {
+                todosArray = (ArrayNode) mapper.readTree(fileContent);
+            }
 
-        Files.writeString(Paths.get(fileName), actualObj.toString());
+            ObjectNode newTodo = mapper.createObjectNode();
+            newTodo.put("done", isDone);
+            newTodo.put("task", todo); // Ajouter la tâche
+            todosArray.add(newTodo);
+
+            Files.writeString(Paths.get(fileName), todosArray.toString());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
     }
 
-    private void handleCsvInsert(String fileName, String fileContent, String todo) throws IOException
-    {
-        // Implémentation de la gestion des fichiers CSV pour l'insertion
-        if (!fileContent.endsWith("\n") && !fileContent.isEmpty())
-        {
-            fileContent += "\n";
-        }
-        fileContent += todo;
+    private void handleCsvInsert(String fileName, String fileContent, String todo) {
+        try {
+            if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
+                fileContent += "\n";
+            }
+            fileContent += todo + "," + isDone + "\n";
 
-        Files.writeString(Paths.get(fileName), fileContent);
+            Files.writeString(Paths.get(fileName), fileContent);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
     }
 }
