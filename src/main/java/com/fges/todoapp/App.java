@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class App {
         CommandLineParser parser = new DefaultParser();
 
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
+        cliOptions.addOption("d", "done", false, "Flag to mark the todo as done"); // Add the --done option
 
         CommandLine cmd;
         try {
@@ -45,6 +47,7 @@ public class App {
         }
 
         String fileName = cmd.getOptionValue("s");
+        boolean isDone = cmd.hasOption("d"); // Check if --done flag is provided
 
         List<String> positionalArgs = cmd.getArgList();
         if (positionalArgs.isEmpty()) {
@@ -64,8 +67,9 @@ public class App {
 
         // Utilisation d'une map pour associer chaque commande à son exécuteur
         Map<String, Command> commandMap = Map.of(
-                "insert", new InsertCommand(),
-                "list", new ListCommand()
+                "insert", new InsertCommand(isDone),
+                "list", new ListCommand(),
+                "migrate", new MigrateCommand()
         );
 
         // Utilisation de l'exécuteur de commandes
