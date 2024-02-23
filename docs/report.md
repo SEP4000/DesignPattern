@@ -49,3 +49,7 @@ Dans ce schéma :
 
 # Pour le lundi 26 février : # 
 J'ai ajoutél'implémentation de la méthode Done ainsi que de la méthode migrate pour pouvoir faire la migration des fichiers.
+
+Voici un schéma qui montre les relations entre les différentes classes et interfaces du code:
+
+![Schéma](Schéma2.png)
