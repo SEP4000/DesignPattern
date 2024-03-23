@@ -29,6 +29,8 @@ public class InsertCommand implements Command {
             handleJsonInsert(fileName, fileContent, todo);
         } else if (fileName.endsWith(App.CSV_EXTENSION)) {
             handleCsvInsert(fileName, fileContent, todo);
+        } else if (positionalArgs.contains("-nf")) {
+            handleNewFileSourceInsert(fileName, fileContent, todo);
         }
     }
 
@@ -65,5 +67,9 @@ public class InsertCommand implements Command {
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
+    }
+
+    private void handleNewFileSourceInsert(String fileName, String fileContent, String todo) {
+        System.out.println("Inserting todo from new file source: " + todo);
     }
 }
