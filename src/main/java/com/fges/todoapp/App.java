@@ -37,6 +37,7 @@ public class App {
 
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
         cliOptions.addOption("d", "done", false, "Flag to mark the todo as done"); // Add the --done option
+        cliOptions.addOption("nf", "new-file-source", false, "Flag to indicate a new file source"); // Add the --new-file-source option
 
         CommandLine cmd;
         try {
@@ -61,7 +62,10 @@ public class App {
 
         String fileContent = Files.exists(filePath) ? Files.readString(filePath) : "";
 
-        if (Files.exists(filePath)) {
+        if (cmd.hasOption("nf")) {
+            NonFileDataSource nonFileDataSource = new NonFileDataSource();
+            fileContent = nonFileDataSource.fetchData();
+        } else if (Files.exists(filePath)) {
             fileContent = Files.readString(filePath);
         }
 
@@ -69,7 +73,8 @@ public class App {
         Map<String, Command> commandMap = Map.of(
                 "insert", new InsertCommand(isDone),
                 "list", new ListCommand(),
-                "migrate", new MigrateCommand()
+                "migrate", new MigrateCommand(),
+                "attribute", new AttributeSourceCommand() // Ajout de la nouvelle Commande
         );
 
         // Utilisation de l'exécuteur de commandes
