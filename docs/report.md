@@ -62,3 +62,23 @@ Dans ce Shéma :
 - **InsertCommand.java:** Cette classe implémente la logique pour insérer une nouvelle tâche dans un fichier, soit au format JSON, soit au format CSV, en fonction de l'extension du fichier spécifié.
 - **ListCommand.java:** Cette classe implémente la logique pour lister les tâches contenues dans un fichier, soit au format JSON, soit au format CSV, en fonction de l'extension du fichier spécifié. Elle prend également en charge l'option de filtrage pour afficher uniquement les tâches terminées.
 - **MigrateCommand.java:** Cette classe implémente la logique pour migrer les données d'un fichier source vers un fichier de sortie, en prenant en charge les fichiers JSON et CSV.
+
+# Pour le samedi 23 mars : # 
+- Ajouter une commande pour extraire un attribut spécifique d'une source de données
+- Modification de InsertCommand pour prendre en charge une nouvelle source de données de fichier,
+- Implémentation d'une nouvelle classe NonFileDataSource pour gérer une source de données non-fichier
+- Intégration de NonFileDataSource dans le fichier App
+- Modification de MigrateCommand pour prendre en charge la migration depuis la nouvelle source de données
+
+  Voici un schéma qui montre les relations entre les différentes classes et interfaces de tous les fichiers:
+
+  Dans ce Shéma : 
+
+- **App.java:** C'est la classe principale de l'application. Elle contient la méthode main qui parse les arguments de la ligne de commande et exécute les commandes appropriées en fonction des arguments fournis.
+- **Command.java:** C'est une interface définissant la méthode execute que toutes les commandes doivent implémenter.
+- **CommandExecutor.java:** Cette classe est responsable de l'exécution des commandes en fonction de leur nom. Elle utilise une carte (Map) pour associer les noms de commandes à leurs implémentations concrètes.
+- **InsertCommand.java:** Cette classe implémente la logique pour insérer une nouvelle tâche dans un fichier, soit au format JSON, soit au format CSV, en fonction de l'extension du fichier spécifié.
+- **ListCommand.java:** Cette classe implémente la logique pour lister les tâches contenues dans un fichier, soit au format JSON, soit au format CSV, en fonction de l'extension du fichier spécifié. Elle prend également en charge l'option de filtrage pour afficher uniquement les tâches terminées.
+- **MigrateCommand.java:** Cette classe implémente la logique pour migrer les données d'un fichier source vers un fichier de sortie, en prenant en charge les fichiers JSON et CSV.
+- **AttributeSourceCommand.java:** Cett classe ajoute une source d'un attribut.
+- **NonFileDataSource.java:** Cette classe représente une source de données non-fichier à partir de laquelle les données peuvent être récupérées.
