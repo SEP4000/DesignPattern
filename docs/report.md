@@ -54,7 +54,7 @@ Voici un schéma qui montre les relations entre les différentes classes et inte
 
 ![Schéma](Schéma2.png)
 
-Dans ce Shéma : 
+Dans ce Schéma : 
 
 - **App.java:** C'est la classe principale de l'application. Elle contient la méthode main qui parse les arguments de la ligne de commande et exécute les commandes appropriées en fonction des arguments fournis.
 - **Command.java:** C'est une interface définissant la méthode execute que toutes les commandes doivent implémenter.
@@ -72,7 +72,9 @@ Dans ce Shéma :
 
   Voici un schéma qui montre les relations entre les différentes classes et interfaces de tous les fichiers:
 
-  Dans ce Shéma : 
+  ![Schéma](Schéma2.png)
+
+  Dans ce Schéma : 
 
 - **App.java:** C'est la classe principale de l'application. Elle contient la méthode main qui parse les arguments de la ligne de commande et exécute les commandes appropriées en fonction des arguments fournis.
 - **Command.java:** C'est une interface définissant la méthode execute que toutes les commandes doivent implémenter.
