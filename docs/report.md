@@ -72,7 +72,7 @@ Dans ce Schéma :
 
   Voici un schéma qui montre les relations entre les différentes classes et interfaces de tous les fichiers:
 
-  ![Schéma](Schéma2.png)
+  ![Schéma](Schéma3.png)
 
   Dans ce Schéma : 
 
