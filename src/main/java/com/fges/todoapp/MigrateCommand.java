@@ -15,7 +15,6 @@ public class MigrateCommand implements Command {
 
         String sourceFile = positionalArgs.get(1);
         String outputFile = positionalArgs.get(2);
-
         String sourceContent;
         try {
             sourceContent = Files.readString(Paths.get(sourceFile));
